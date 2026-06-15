@@ -24,6 +24,7 @@ public class ClienteModel {
           final ClienteEmail email,
           final ClientePassword password,
           final ClienteRole role,
+          final ClienteStatus status,
           final ClienteBarrio barrio,
           final ClienteCalle calle,
           final ClienteCity city

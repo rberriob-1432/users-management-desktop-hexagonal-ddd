@@ -3,9 +3,11 @@ package com.rabb.clientsmanagement.domain.model;
 import com.rabb.clientsmanagement.domain.enums.ClienteRole;
 import com.rabb.clientsmanagement.domain.enums.ClienteStatus;
 import com.rabb.clientsmanagement.domain.valueobject.*;
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
 @Value
+@AllArgsConstructor // Genera automáticamente el constructor para todos los campos
 public class ClienteModel {
 
   ClienteId id;
@@ -24,14 +26,13 @@ public class ClienteModel {
           final ClienteEmail email,
           final ClientePassword password,
           final ClienteRole role,
-          final ClienteStatus status,
           final ClienteBarrio barrio,
           final ClienteCalle calle,
-          final ClienteCity city
-  ) {
+          final ClienteCity city) {
     return new ClienteModel(id, name, email, password, role, ClienteStatus.PENDING, barrio, calle, city);
   }
 
+  // Métodos de comportamiento para cambio de estado
   public ClienteModel activate() {
     return new ClienteModel(id, name, email, password, role, ClienteStatus.ACTIVE, barrio, calle, city);
   }

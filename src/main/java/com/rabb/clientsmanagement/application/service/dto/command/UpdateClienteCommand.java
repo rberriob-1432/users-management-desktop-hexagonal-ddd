@@ -24,7 +24,10 @@ public record UpdateClienteCommand(
         @NotBlank(message = "password must not be blank")
         @Size(min = 8, message = "password must have at least 8 characters")
         String password,
-        @NotBlank(message = "role must not be blank") String role)
+        @NotBlank(message = "role must not be blank")
+        String role,
+        @NotBlank(message = "status must not be blank")
+        String status)
 {
 
 }

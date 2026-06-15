@@ -8,11 +8,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum MenuOption {
 
-  LIST_USERS(1, "List all clientes"),
-  FIND_USER(2, "Find cliente by ID"),
-  CREATE_USER(3, "Create cliente"),
-  UPDATE_USER(4, "Update cliente"),
-  DELETE_USER(5, "Delete cliente"),
+  LIST_CLIENTES(1, "List all clientes"),
+  FIND_CLIENTE(2, "Find cliente by ID"),
+  CREATE_CLIENTE(3, "Create cliente"),
+  UPDATE_CLIENTE(4, "Update cliente"),
+  DELETE_CLIENTE(5, "Delete cliente"),
   LOGIN(6, "Login"),
   EXIT(0, "Exit");
 

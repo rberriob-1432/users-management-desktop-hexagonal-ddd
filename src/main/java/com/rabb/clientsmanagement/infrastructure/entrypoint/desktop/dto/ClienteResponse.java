@@ -1,6 +1,6 @@
 package com.rabb.clientsmanagement.infrastructure.entrypoint.desktop.dto;
 
-public record UpdateUserRequest(
+public record ClienteResponse(
         String id,
         String name,
         String email,

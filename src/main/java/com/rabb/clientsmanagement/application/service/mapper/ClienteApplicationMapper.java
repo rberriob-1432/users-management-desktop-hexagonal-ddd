@@ -19,7 +19,6 @@ public class ClienteApplicationMapper {
             new ClienteEmail(command.email()),
             ClientePassword.fromPlainText(command.password()),
             ClienteRole.fromString(command.role()),
-            ClienteStatus.PENDING,//Error
             new ClienteBarrio(command.barrio()),//Error
             new ClienteCalle(command.calle()),//Error
             new ClienteCity(command.city()));

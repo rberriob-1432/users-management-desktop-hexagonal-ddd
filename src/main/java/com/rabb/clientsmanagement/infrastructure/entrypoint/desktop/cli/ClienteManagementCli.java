@@ -62,13 +62,14 @@ public final class ClienteManagementCli {
   }
 
   private Map<MenuOption, OperationHandler> buildHandlers(final ClienteResponsePrinter printer) {
-    return Map.of(
-            MenuOption.LIST_CLIENTES,   new ListClienteHandler(clienteController, printer),
-            MenuOption.FIND_CLIENTE,    new FindClienteByIdHandler(clienteController, console, printer),
-            MenuOption.CREATE_CLIENTE,  new CreateClienteHandler(clienteController, console, printer),
-            MenuOption.UPDATE_CLIENTE,  new UpdateClienteHandler(clienteController, console, printer),
-            MenuOption.DELETE_CLIENTE,  new DeleteClienteHandler(clienteController, console),
-            MenuOption.LOGIN,           new LoginHandler(clienteController, console, printer));
+    return Map.ofEntries(
+            Map.entry(MenuOption.LIST_CLIENTES,   new ListClienteHandler(clienteController, printer)),
+            Map.entry(MenuOption.FIND_CLIENTE,    new FindClienteByIdHandler(clienteController, console, printer)),
+            Map.entry(MenuOption.CREATE_CLIENTE,  new CreateClienteHandler(clienteController, console, printer)),
+            Map.entry(MenuOption.UPDATE_CLIENTE,  new UpdateClienteHandler(clienteController, console, printer)),
+            Map.entry(MenuOption.DELETE_CLIENTE,  new DeleteClienteHandler(clienteController, console)),
+            Map.entry(MenuOption.LOGIN,           new LoginHandler(clienteController, console, printer))
+    );
   }
 
   private void printMenu() {

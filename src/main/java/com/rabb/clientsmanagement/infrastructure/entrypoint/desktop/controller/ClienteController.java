@@ -22,8 +22,8 @@ public final class ClienteController {
   private final LoginUseCase loginUseCase;
 
   public List<ClienteResponse> listAllClientes() {
-    final var users = getAllClientesUseCase.execute();
-    return ClienteDesktopMapper.toResponseList(users);
+    final var clientes = getAllClientesUseCase.execute();
+    return ClienteDesktopMapper.toResponseList(clientes);
   }
 
   public ClienteResponse findClienteById(final String id) {

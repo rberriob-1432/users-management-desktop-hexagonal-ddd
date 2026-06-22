@@ -1,4 +1,4 @@
-package com.jcaa.usersmanagement.infrastructure.adapter.email;
+package com.jcaa.shared.infrastructure.adapter;
 
 import com.jcaa.usersmanagement.application.port.out.EmailSenderPort;
 import com.jcaa.usersmanagement.domain.exception.EmailSenderException;

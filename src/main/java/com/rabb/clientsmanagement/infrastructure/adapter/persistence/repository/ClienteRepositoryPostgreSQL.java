@@ -8,6 +8,7 @@ import com.rabb.clientsmanagement.domain.valueobject.ClienteId;
 import com.rabb.clientsmanagement.infrastructure.adapter.persistence.dto.ClientePersistenceDto;
 import com.rabb.clientsmanagement.infrastructure.adapter.persistence.exception.PersistenceException;
 import com.rabb.clientsmanagement.infrastructure.adapter.persistence.mapper.ClientePersistenceMapper;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
@@ -15,142 +16,173 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
 
 @Log
 @RequiredArgsConstructor
-public final class ClienteRepositoryPostgreSQL
-        implements SaveClientePort,
+public final class ClienteRepositoryPostgreSQL implements
+        SaveClientePort,
         UpdateClientePort,
         GetClienteByIdPort,
         GetClienteByEmailPort,
         GetAllClientesPort,
-        DeleteClientePort {
+        DeleteClientePort,
+        GetAllCiudadesPort,
+        GetClientesByCiudadPort {
 
-  private static final String SQL_INSERT =
-          "INSERT INTO clientes "
-                  + "(id, name, email, password, role, status, barrio, calle, city, created_at, updated_at) "
-                  + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    private static final String SQL_INSERT =
+            "INSERT INTO clientes (id, name, email, password, role, status, calle, barrio, ciudad, created_at, updated_at) " +
+                    "VALUES (?, ?, ?, ?, ?::cliente_role, ?::cliente_status, ?, ?, ?, NOW(), NOW())";
 
-  private static final String SQL_UPDATE =
-          "UPDATE clientes "
-                  + "SET name = ?, email = ?, password = ?, role = ?, status = ?, barrio = ?, calle = ?, city = ?, updated_at = NOW() "
-                  + "WHERE id = ?";
+    private static final String SQL_UPDATE =
+            "UPDATE clientes SET name=?, email=?, password=?, role=?::cliente_role, status=?::cliente_status, calle=?, barrio=?, ciudad=?, updated_at=NOW() " +
+                    "WHERE id=?";
 
-  private static final String SQL_SELECT_BY_ID =
-          "SELECT id, name, email, password, role, status, barrio, calle, city, created_at, updated_at "
-                  + "FROM clientes "
-                  + "WHERE id = ? LIMIT 1";
+    private static final String SQL_SELECT_BY_ID =
+            "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
+                    "FROM clientes WHERE id = ? LIMIT 1";
 
-  private static final String SQL_SELECT_BY_EMAIL =
-          "SELECT id, name, email, password, role, status, barrio, calle, city, created_at, updated_at "
-                  + "FROM clientes "
-                  + "WHERE email = ? LIMIT 1";
+    private static final String SQL_SELECT_BY_EMAIL =
+            "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
+                    "FROM clientes WHERE email = ? LIMIT 1";
 
-  private static final String SQL_SELECT_ALL =
-          "SELECT id, name, email, password, role, status, barrio, calle, city, created_at, updated_at "
-                  + "FROM clientes "
-                  + "ORDER BY name ASC";
+    private static final String SQL_SELECT_ALL =
+            "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
+                    "FROM clientes ORDER BY name ASC";
 
-  private static final String SQL_DELETE =
-          "DELETE FROM clientes "
-                  + "WHERE id = ?";
+    private static final String SQL_DELETE =
+            "DELETE FROM clientes WHERE id = ?";
 
-  private final Connection connection;
+    private static final String SQL_SELECT_DISTINCT_CIUDADES =
+            "SELECT DISTINCT ciudad FROM clientes WHERE ciudad IS NOT NULL ORDER BY ciudad ASC";
 
-  @Override
-  public ClienteModel save(final ClienteModel user) {
-    final ClientePersistenceDto dto = ClientePersistenceMapper.fromModelToDto(user);
-    executeSave(dto);
-    return findByIdOrFail(user.getId());
-  }
+    private static final String SQL_SELECT_BY_CIUDAD =
+            "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
+                    "FROM clientes WHERE LOWER(ciudad) = LOWER(?) ORDER BY name ASC";
 
-  @Override
-  public ClienteModel update(final ClienteModel user) {
-    final ClientePersistenceDto dto = ClientePersistenceMapper.fromModelToDto(user);
-    executeUpdate(dto);
-    return findByIdOrFail(user.getId());
-  }
+    private final Connection connection;
 
-  @Override
-  public Optional<ClienteModel> getById(final ClienteId userId) {
-    try (final PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
-      statement.setString(1, userId.value());
-      final ResultSet resultSet = statement.executeQuery();
-      if (!resultSet.next()) {
-        return Optional.empty();
-      }
-      return Optional.of(ClientePersistenceMapper.fromResultSetToModel(resultSet));
-    } catch (final SQLException exception) {
-      throw PersistenceException.becauseFindByIdFailed(userId.value(), exception);
+    @Override
+    public ClienteModel save(ClienteModel cliente) {
+        ClientePersistenceDto dto = ClientePersistenceMapper.fromModelToDto(cliente);
+        executeSave(dto);
+        return findByIdOrFail(cliente.getId());
     }
-  }
 
-  @Override
-  public Optional<ClienteModel> getByEmail(final ClienteEmail email) {
-    try (final PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_EMAIL)) {
-      statement.setString(1, email.value());
-      final ResultSet resultSet = statement.executeQuery();
-      if (!resultSet.next()) {
-        return Optional.empty();
-      }
-      return Optional.of(ClientePersistenceMapper.fromResultSetToModel(resultSet));
-    } catch (final SQLException exception) {
-      throw PersistenceException.becauseFindByEmailFailed(email.value(), exception);
+    @Override
+    public ClienteModel update(ClienteModel cliente) {
+        ClientePersistenceDto dto = ClientePersistenceMapper.fromModelToDto(cliente);
+        executeUpdate(dto);
+        return findByIdOrFail(cliente.getId());
     }
-  }
 
-  @Override
-  public List<ClienteModel> getAll() {
-    try (final PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL)) {
-      final ResultSet resultSet = statement.executeQuery();
-      return ClientePersistenceMapper.fromResultSetToModelList(resultSet);
-    } catch (final SQLException exception) {
-      throw PersistenceException.becauseFindAllFailed(exception);
+    @Override
+    public Optional<ClienteModel> getById(ClienteId clienteId) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+            statement.setString(1, clienteId.value());
+            ResultSet rs = statement.executeQuery();
+            if (!rs.next()) return Optional.empty();
+            return Optional.of(ClientePersistenceMapper.fromResultSetToModel(rs));
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindByIdFailed(clienteId.value(), e);
+        }
     }
-  }
 
-  @Override
-  public void delete(final ClienteId userId) {
-    try (final PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
-      statement.setString(1, userId.value());
-      statement.executeUpdate();
-    } catch (final SQLException exception) {
-      throw PersistenceException.becauseDeleteFailed(userId.value(), exception);
+    @Override
+    public Optional<ClienteModel> getByEmail(ClienteEmail email) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_EMAIL)) {
+            statement.setString(1, email.value());
+            ResultSet rs = statement.executeQuery();
+            if (!rs.next()) return Optional.empty();
+            return Optional.of(ClientePersistenceMapper.fromResultSetToModel(rs));
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindByEmailFailed(email.value(), e);
+        }
     }
-  }
 
-  private void executeSave(final ClientePersistenceDto dto) {
-    try (final PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
-      statement.setString(1, dto.id());
-      statement.setString(2, dto.name());
-      statement.setString(3, dto.email());
-      statement.setString(4, dto.password());
-      statement.setString(5, dto.role());
-      statement.setString(6, dto.status());
-      statement.executeUpdate();
-    } catch (final SQLException exception) {
-      throw PersistenceException.becauseSaveFailed(dto.id(), exception);
+    @Override
+    public List<ClienteModel> getAll() {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL)) {
+            ResultSet rs = statement.executeQuery();
+            return ClientePersistenceMapper.fromResultSetToModelList(rs);
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindAllFailed(e);
+        }
     }
-  }
 
-  private void executeUpdate(final ClientePersistenceDto dto) {
-    try (final PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
-      statement.setString(1, dto.name());
-      statement.setString(2, dto.email());
-      statement.setString(3, dto.password());
-      statement.setString(4, dto.role());
-      statement.setString(5, dto.status());
-      statement.setString(6, dto.id());
-      statement.executeUpdate();
-    } catch (final SQLException exception) {
-      throw PersistenceException.becauseUpdateFailed(dto.id(), exception);
+    @Override
+    public void delete(ClienteId clienteId) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+            statement.setString(1, clienteId.value());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw PersistenceException.becauseDeleteFailed(clienteId.value(), e);
+        }
     }
-  }
 
-  private ClienteModel findByIdOrFail(final ClienteId userId) {
-    return getById(userId)
-            .orElseThrow(() -> ClienteNotFoundException.becauseIdWasNotFound(userId.value()));
-  }
+    @Override
+    public List<String> getAllCiudades() {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_DISTINCT_CIUDADES)) {
+            ResultSet rs = statement.executeQuery();
+            List<String> ciudades = new ArrayList<>();
+            while (rs.next()) {
+                ciudades.add(rs.getString("ciudad"));
+            }
+            return ciudades;
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindAllCiudadesFailed(e);
+        }
+    }
+
+    @Override
+    public List<ClienteModel> getByCiudad(String ciudad) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_CIUDAD)) {
+            statement.setString(1, ciudad);
+            ResultSet rs = statement.executeQuery();
+            return ClientePersistenceMapper.fromResultSetToModelList(rs);
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindByCiudadFailed(ciudad, e);
+        }
+    }
+
+    private void executeSave(ClientePersistenceDto dto) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+            statement.setString(1, dto.id());
+            statement.setString(2, dto.name());
+            statement.setString(3, dto.email());
+            statement.setString(4, dto.password());
+            statement.setObject(5, dto.role(), Types.OTHER);
+            statement.setObject(6, dto.status(), Types.OTHER);
+            statement.setString(7, dto.calle());
+            statement.setString(8, dto.barrio());
+            statement.setString(9, dto.ciudad());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw PersistenceException.becauseSaveFailed(dto.id(), e);
+        }
+    }
+
+    private void executeUpdate(ClientePersistenceDto dto) {
+        try (PreparedStatement st = connection.prepareStatement(SQL_UPDATE)) {
+            st.setString(1, dto.name());
+            st.setString(2, dto.email());
+            st.setString(3, dto.password());
+            st.setObject(4, dto.role(), Types.OTHER);
+            st.setObject(5, dto.status(), Types.OTHER);
+            st.setString(6, dto.calle());
+            st.setString(7, dto.barrio());
+            st.setString(8, dto.ciudad());
+            st.setString(9, dto.id());
+            st.executeUpdate();
+        } catch (SQLException e) {
+            throw PersistenceException.becauseUpdateFailed(dto.id(), e);
+        }
+    }
+
+    private ClienteModel findByIdOrFail(ClienteId id) {
+        return getById(id).orElseThrow(() ->
+                ClienteNotFoundException.becauseIdWasNotFound(id.value()));
+    }
 }

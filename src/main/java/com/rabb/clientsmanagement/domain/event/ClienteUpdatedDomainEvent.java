@@ -26,6 +26,6 @@ public final class ClienteUpdatedDomainEvent extends DomainEvent {
             "status", cliente.getStatus().name(),
             "barrio", cliente.getBarrio().value(),
             "calle", cliente.getCalle().value(),
-            "city", cliente.getCity().value());
+            "city", cliente.getCiudad().value());
   }
 }

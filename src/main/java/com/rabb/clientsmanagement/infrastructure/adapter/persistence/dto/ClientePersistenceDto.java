@@ -7,8 +7,7 @@ public record ClientePersistenceDto(
         String password,
         String role,
         String status,
-        String barrio,
         String calle,
-        String city,
-        String createdAt,
-        String updatedAt) {}
+        String barrio,
+        String ciudad
+) {}

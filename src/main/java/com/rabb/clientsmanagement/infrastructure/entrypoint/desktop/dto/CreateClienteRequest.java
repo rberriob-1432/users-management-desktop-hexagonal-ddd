@@ -4,8 +4,9 @@ public record CreateClienteRequest(
         String id,
         String name,
         String email,
-        String password,
         String role,
-        String barrio,
+        String status,
         String calle,
-        String city) {}
+        String barrio,
+        String password,
+        String ciudad) {}

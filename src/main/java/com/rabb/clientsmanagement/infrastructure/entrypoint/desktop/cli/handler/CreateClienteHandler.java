@@ -30,7 +30,7 @@ public final class CreateClienteHandler implements OperationHandler {
     try {
       final ClienteResponse created =
               clienteController.createCliente(new CreateClienteRequest(
-                      id, name, email, password, role, barrio, calle, city));
+                      id, name, email, role, "ACTIVE", calle, barrio, password, city));
       console.println("\n  Cliente created successfully.");
       printer.print(created);
     } catch (final ClienteAlreadyExistsException exception) {

@@ -5,26 +5,26 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record CreateClienteCommand(
-    @NotBlank(message = "id must not be blank") String id,
-    @NotBlank(message = "name must not be blank")
+        @NotBlank(message = "id must not be blank") String id,
+        @NotBlank(message = "name must not be blank")
         @Size(min = 3, message = "name must have at least 3 characters")
         String name,
-    @NotBlank(message = "neighborhood must not be blank")
-    @Size(min = 3, message = "neighborhood must have at least 3 characters")
-    String barrio,
-    @NotBlank(message = "street must not be blank")
-    @Size(min = 3, message = "street must have at least 3 characters")
-    String calle,
-    @NotBlank(message = "city must not be blank")
-    @Size(min = 3, message = "city must have at least 3 characters")
-    String city,
-    @NotBlank(message = "email must not be blank")
+        @NotBlank(message = "email must not be blank")
         @Email(message = "email must be a valid email address")
         String email,
-    @NotBlank(message = "password must not be blank")
-        @Size(min = 8, message = "password must have at least 8 characters")
         String password,
-    @NotBlank(message = "role must not be blank") String role)
-{
+        @NotBlank(message = "role must not be blank") String role,
+        @NotBlank(message = "status must not be blank") String status,
 
+        @NotBlank(message = "calle must not be blank")
+        @Size(min = 3, message = "calle must have at least 3 characters")
+        String calle,
+
+        @NotBlank(message = "barrio must not be blank")
+        @Size(min = 3, message = "barrio must have at least 3 characters")
+        String barrio,
+
+        @NotBlank(message = "ciudad must not be blank")
+        @Size(min = 3, message = "ciudad must have at least 3 characters")
+        String ciudad) {
 }

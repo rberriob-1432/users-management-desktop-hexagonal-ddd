@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 
+import com.jcaa.shared.infrastructure.adapter.JavaMailEmailSenderAdapter;
+import com.jcaa.shared.infrastructure.adapter.SmtpConfig;
 import com.jcaa.usersmanagement.domain.exception.EmailSenderException;
 import com.jcaa.usersmanagement.domain.model.EmailDestinationModel;
 import java.lang.reflect.Field;

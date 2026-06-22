@@ -16,7 +16,7 @@ public final class Main {
     log.info("Starting Clientes Management System...");
     final DependencyContainer container = new DependencyContainer();
     try (final Scanner scanner = new Scanner(System.in)) {
-      new ClienteManagementCli(container.clienteController(), new ConsoleIO(scanner, System.out)).start();//error
+      new ClienteManagementCli(container.clienteController(), new ConsoleIO(scanner, System.out)).start();
     }
   }
 }

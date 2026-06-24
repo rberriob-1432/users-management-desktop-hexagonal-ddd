@@ -73,6 +73,12 @@ public final class DependencyContainer {
         final GetClientesByCiudadUseCase getClientesByCiudadUseCase =
                 new GetClientesByCiudadService(clienteRepository);
 
+        final GetAllBarriosUseCase getAllBarriosUseCase =
+                new GetAllBarriosService(clienteRepository);
+
+        final GetClientesByBarrioUseCase getClientesByBarrioUseCase =
+                new GetClientesByBarrioService(clienteRepository);
+
         this.clienteController =
                 new ClienteController(
                         createClienteUseCase,
@@ -82,7 +88,9 @@ public final class DependencyContainer {
                         getAllClientesUseCase,
                         loginUseCase,
                         getAllCiudadesUseCase,
-                        getClientesByCiudadUseCase);
+                        getClientesByCiudadUseCase,
+                        getAllBarriosUseCase,
+                        getClientesByBarrioUseCase);
     }
 
     public ClienteController clienteController() {

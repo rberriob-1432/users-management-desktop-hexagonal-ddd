@@ -16,6 +16,7 @@ public enum MenuOption {
     DELETE_CLIENTE(5, "Delete client"),
     LOGIN(6, "Login"),
     FIND_BY_CIUDAD(7, "Find clients by city"),
+    FIND_BY_BARRIO(8, "Find clients by neighborhood"),
     EXIT(0, "Exit");
 
     private final int number;

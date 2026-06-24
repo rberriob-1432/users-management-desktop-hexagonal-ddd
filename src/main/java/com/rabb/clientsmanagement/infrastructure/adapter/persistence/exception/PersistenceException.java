@@ -11,7 +11,8 @@ public final class PersistenceException extends RuntimeException {
     private static final String MESSAGE_CONNECTION = "Could not establish database connection.";
     private static final String MESSAGE_ALL_CIUDADES = "Failed to retrieve all ciudades.";
     private static final String MESSAGE_BY_CIUDAD = "Failed to retrieve clientes for ciudad: '%s'.";
-
+    private static final String MESSAGE_BY_BARRIO = "Failed to retrieve clientes for barrio: '%s'.";
+    private static final String MESSAGE_ALL_BARRIOS = "Failed to retrieve all barrios.";
     private PersistenceException(final String message, final Throwable cause) {
         super(message, cause);
     }
@@ -55,5 +56,14 @@ public final class PersistenceException extends RuntimeException {
     public static PersistenceException becauseFindByCiudadFailed(
             final String ciudad, final Throwable cause) {
         return new PersistenceException(String.format(MESSAGE_BY_CIUDAD, ciudad), cause);
+    }
+
+    public static PersistenceException becauseFindByBarrioFailed(
+            final String barrio, final Throwable cause) {
+        return new PersistenceException(String.format(MESSAGE_BY_BARRIO, barrio), cause);
+    }
+
+    public static PersistenceException becauseFindAllBarriosFailed(final Throwable cause) {
+        return new PersistenceException(MESSAGE_ALL_BARRIOS, cause);
     }
 }

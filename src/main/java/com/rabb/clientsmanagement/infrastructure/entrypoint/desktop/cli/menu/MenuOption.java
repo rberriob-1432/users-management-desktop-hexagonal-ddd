@@ -20,6 +20,7 @@ public enum MenuOption {
     FIND_BY_NAME(9, "Find clients by name"),
     FIND_BY_CALLE(10, "Find clients by street"),
     FIND_BY_ESTATUS(11, "Find clients by status"),
+    FIND_BY_ROLE(12, "Find clients by role"),
     EXIT(0, "Exit");
 
     private final int number;

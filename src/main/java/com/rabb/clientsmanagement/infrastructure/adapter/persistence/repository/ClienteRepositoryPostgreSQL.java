@@ -38,7 +38,9 @@ public final class ClienteRepositoryPostgreSQL implements
         GetAllCallesByCiudadPort,
         GetClientesByCalleAndCiudadPort,
         GetAllEstatusPort,
-        GetClientesByEstatusPort
+        GetClientesByEstatusPort,
+    GetAllRolesPort,
+            GetClientesByRolePort
 {
 
     private static final String SQL_INSERT =
@@ -95,6 +97,12 @@ public final class ClienteRepositoryPostgreSQL implements
     private static final String SQL_SELECT_BY_ESTATUS =
             "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
                     "FROM clientes WHERE LOWER(status::text) = LOWER(?) ORDER BY name ASC";
+    private static final String SQL_SELECT_DISTINCT_ROLES =
+            "SELECT DISTINCT role FROM clientes WHERE role IS NOT NULL ORDER BY role ASC";
+
+    private static final String SQL_SELECT_BY_ROLE =
+            "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
+                    "FROM clientes WHERE LOWER(role::text) = LOWER(?) ORDER BY name ASC";
     @Override
     public ClienteModel save(ClienteModel cliente) {
         ClientePersistenceDto dto = ClientePersistenceMapper.fromModelToDto(cliente);
@@ -276,7 +284,31 @@ public final class ClienteRepositoryPostgreSQL implements
             throw PersistenceException.becauseFindByEstatusFailed(estatus, e);
         }
     }
+    @Override
+    public List<String> getAllRoles() {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_DISTINCT_ROLES)) {
+            ResultSet rs = statement.executeQuery();
+            List<String> roles = new ArrayList<>();
+            while (rs.next()) {
+                roles.add(rs.getString("role"));
+            }
+            return roles;
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindAllRolesFailed(e);
+        }
+    }
 
+    @Override
+    public List<ClienteModel> getByRole(final String role) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SQL_SELECT_BY_ROLE)) {
+            statement.setString(1, role);
+            ResultSet rs = statement.executeQuery();
+            return ClientePersistenceMapper.fromResultSetToModelList(rs);
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindByRoleFailed(role, e);
+        }
+    }
     private void executeSave(ClientePersistenceDto dto) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, dto.id());

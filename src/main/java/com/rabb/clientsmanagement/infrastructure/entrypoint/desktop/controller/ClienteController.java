@@ -28,6 +28,9 @@ public final class ClienteController {
     private final GetClientesByCalleAndCiudadUseCase getClientesByCalleAndCiudadUseCase;
     private final GetAllEstatusUseCase getAllEstatusUseCase;
     private final GetClientesByEstatusUseCase getClientesByEstatusUseCase;
+    private final GetAllRolesUseCase getAllRolesUseCase;
+    private final GetClientesByRoleUseCase getClientesByRoleUseCase;
+
     public List<ClienteResponse> listAllClientes() {
         final var clientes = getAllClientesUseCase.execute();
         return ClienteDesktopMapper.toResponseList(clientes);
@@ -61,6 +64,7 @@ public final class ClienteController {
         final var cliente = loginUseCase.execute(command);
         return ClienteDesktopMapper.toResponse(cliente);
     }
+
     public List<String> getAllCallesByCiudad(final String ciudad) {
         return getAllCallesByCiudadUseCase.execute(ciudad);
     }
@@ -69,6 +73,7 @@ public final class ClienteController {
         final var clientes = getClientesByCalleAndCiudadUseCase.execute(calle, ciudad);
         return ClienteDesktopMapper.toResponseList(clientes);
     }
+
     public List<String> getAllCiudades() {
         return getAllCiudadesUseCase.execute();
     }
@@ -77,6 +82,7 @@ public final class ClienteController {
         final var clientes = getClientesByCiudadUseCase.execute(ciudad);
         return ClienteDesktopMapper.toResponseList(clientes);
     }
+
     public List<String> getAllBarrios() {
         return getAllBarriosUseCase.execute();
     }
@@ -85,6 +91,7 @@ public final class ClienteController {
         final var clientes = getClientesByBarrioUseCase.execute(barrio);
         return ClienteDesktopMapper.toResponseList(clientes);
     }
+
     public List<String> getAllNames() {
         return getAllNamesUseCase.execute();
     }
@@ -102,4 +109,14 @@ public final class ClienteController {
         final var clientes = getClientesByEstatusUseCase.execute(estatus);
         return ClienteDesktopMapper.toResponseList(clientes);
     }
+
+    public List<String> getAllRoles() {
+        return getAllRolesUseCase.execute();
+    }
+
+    public List<ClienteResponse> getClientesByRole(final String role) {
+        final var clientes = getClientesByRoleUseCase.execute(role);
+        return ClienteDesktopMapper.toResponseList(clientes);
+    }
 }
+

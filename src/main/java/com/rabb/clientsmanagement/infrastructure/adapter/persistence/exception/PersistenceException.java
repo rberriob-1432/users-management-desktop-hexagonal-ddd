@@ -17,6 +17,9 @@ public final class PersistenceException extends RuntimeException {
     private static final String MESSAGE_BY_NAME = "Failed to retrieve clientes for name: '%s'.";
     private static final String MESSAGE_ALL_ESTATUS = "Failed to retrieve all estatus.";
     private static final String MESSAGE_BY_ESTATUS = "Failed to retrieve clientes for estatus: '%s'.";
+    private static final String MESSAGE_ALL_ROLES = "Failed to retrieve all roles.";
+    private static final String MESSAGE_BY_ROLE = "Failed to retrieve clientes for role: '%s'.";
+
     private PersistenceException(final String message, final Throwable cause) {
         super(message, cause);
     }
@@ -70,6 +73,7 @@ public final class PersistenceException extends RuntimeException {
     public static PersistenceException becauseFindAllBarriosFailed(final Throwable cause) {
         return new PersistenceException(MESSAGE_ALL_BARRIOS, cause);
     }
+
     public static PersistenceException becauseFindAllNamesFailed(final Throwable cause) {
         return new PersistenceException(MESSAGE_ALL_NAMES, cause);
     }
@@ -78,6 +82,7 @@ public final class PersistenceException extends RuntimeException {
             final String name, final Throwable cause) {
         return new PersistenceException(String.format(MESSAGE_BY_NAME, name), cause);
     }
+
     public static PersistenceException becauseFindAllEstatusFailed(final Throwable cause) {
         return new PersistenceException(MESSAGE_ALL_ESTATUS, cause);
     }
@@ -86,4 +91,17 @@ public final class PersistenceException extends RuntimeException {
             final String estatus, final Throwable cause) {
         return new PersistenceException(String.format(MESSAGE_BY_ESTATUS, estatus), cause);
     }
+
+    public static PersistenceException becauseFindAllRolesFailed(final Throwable cause) {
+        return new PersistenceException(MESSAGE_ALL_ROLES, cause);
+    }
+
+    public static PersistenceException becauseFindByRoleFailed(
+            final String role, final Throwable cause) {
+        return new PersistenceException(String.format(MESSAGE_BY_ROLE, role), cause);
+    }
+    private static final String MESSAGE_CALLES_BY_CIUDAD =
+            "Failed to retrieve calles for ciudad: '%s'.";
+    private static final String MESSAGE_CLIENTES_BY_CALLE_AND_CIUDAD =
+            "Failed to retrieve clientes for calle: '%s' and ciudad: '%s'.";
 }

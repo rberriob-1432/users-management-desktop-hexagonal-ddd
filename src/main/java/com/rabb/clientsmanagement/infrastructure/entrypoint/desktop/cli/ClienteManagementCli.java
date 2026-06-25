@@ -73,6 +73,7 @@ public final class ClienteManagementCli {
         handlers.put(MenuOption.FIND_BY_CIUDAD,  new FindClienteByCiudadHandler(clienteController, console, printer));
         handlers.put(MenuOption.FIND_BY_BARRIO,  new FindClienteByBarrioHandler(clienteController, console, printer));
         handlers.put(MenuOption.FIND_BY_NAME,  new FindClienteByNameHandler(clienteController, console, printer));
+        handlers.put(MenuOption.FIND_BY_CALLE,   new FindClienteByCalleHandler(clienteController, console, printer));
         return handlers;
     }
 

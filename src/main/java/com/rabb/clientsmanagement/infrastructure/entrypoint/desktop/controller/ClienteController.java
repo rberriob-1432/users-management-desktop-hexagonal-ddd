@@ -24,6 +24,8 @@ public final class ClienteController {
     private final GetClientesByBarrioUseCase getClientesByBarrioUseCase;
     private final GetAllNamesUseCase getAllNamesUseCase;
     private final GetClientesByNameUseCase getClientesByNameUseCase;
+    private final GetAllCallesByCiudadUseCase getAllCallesByCiudadUseCase;
+    private final GetClientesByCalleAndCiudadUseCase getClientesByCalleAndCiudadUseCase;
     public List<ClienteResponse> listAllClientes() {
         final var clientes = getAllClientesUseCase.execute();
         return ClienteDesktopMapper.toResponseList(clientes);
@@ -57,7 +59,14 @@ public final class ClienteController {
         final var cliente = loginUseCase.execute(command);
         return ClienteDesktopMapper.toResponse(cliente);
     }
+    public List<String> getAllCallesByCiudad(final String ciudad) {
+        return getAllCallesByCiudadUseCase.execute(ciudad);
+    }
 
+    public List<ClienteResponse> getClientesByCalleAndCiudad(final String calle, final String ciudad) {
+        final var clientes = getClientesByCalleAndCiudadUseCase.execute(calle, ciudad);
+        return ClienteDesktopMapper.toResponseList(clientes);
+    }
     public List<String> getAllCiudades() {
         return getAllCiudadesUseCase.execute();
     }

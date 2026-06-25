@@ -32,7 +32,9 @@ public final class ClienteRepositoryPostgreSQL implements
         GetAllCiudadesPort,
         GetClientesByCiudadPort,
         GetAllBarriosPort,
-        GetClientesByBarrioPort
+        GetClientesByBarrioPort,
+        GetAllNamesPort,
+        GetClientesByNamePort
 {
 
     private static final String SQL_INSERT =
@@ -70,6 +72,12 @@ public final class ClienteRepositoryPostgreSQL implements
     private static final String SQL_SELECT_BY_BARRIO =
             "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
                     "FROM clientes WHERE LOWER(barrio) = LOWER(?) ORDER BY name ASC";
+    private static final String SQL_SELECT_DISTINCT_NAMES =
+        "SELECT DISTINCT name FROM clientes WHERE name IS NOT NULL ORDER BY name ASC";
+
+    private static final String SQL_SELECT_BY_NAME =
+            "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
+                    "FROM clientes WHERE LOWER(name) = LOWER(?) ORDER BY name ASC";
     private final Connection connection;
 
     @Override
@@ -179,7 +187,30 @@ public final class ClienteRepositoryPostgreSQL implements
             throw PersistenceException.becauseFindByBarrioFailed(barrio, e);
         }
     }
+    @Override
+    public List<String> getAllNames() {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_DISTINCT_NAMES)) {
+            ResultSet rs = statement.executeQuery();
+            List<String> names = new ArrayList<>();
+            while (rs.next()) {
+                names.add(rs.getString("name"));
+            }
+            return names;
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindAllNamesFailed(e);
+        }
+    }
 
+    @Override
+    public List<ClienteModel> getByName(String name) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            return ClientePersistenceMapper.fromResultSetToModelList(rs);
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindByNameFailed(name, e);
+        }
+    }
     private void executeSave(ClientePersistenceDto dto) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, dto.id());

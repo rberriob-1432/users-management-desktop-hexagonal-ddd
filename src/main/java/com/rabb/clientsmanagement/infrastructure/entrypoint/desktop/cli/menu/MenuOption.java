@@ -17,6 +17,7 @@ public enum MenuOption {
     LOGIN(6, "Login"),
     FIND_BY_CIUDAD(7, "Find clients by city"),
     FIND_BY_BARRIO(8, "Find clients by neighborhood"),
+    FIND_BY_NAME(9, "Find clients by name"),
     EXIT(0, "Exit");
 
     private final int number;

@@ -1,5 +1,5 @@
 package com.rabb.clientsmanagement.application.port.in;
 import java.util.List;
-public interface GetallNamesUseCase {
+public interface GetAllNamesUseCase {
     List<String> execute();
 }

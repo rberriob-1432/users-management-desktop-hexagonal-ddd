@@ -94,7 +94,7 @@ public final class ClienteRepositoryPostgreSQL implements
 
     private static final String SQL_SELECT_BY_ESTATUS =
             "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
-                    "FROM clientes WHERE LOWER(status) = LOWER(?) ORDER BY name ASC";
+                    "FROM clientes WHERE LOWER(status::text) = LOWER(?) ORDER BY name ASC";
     @Override
     public ClienteModel save(ClienteModel cliente) {
         ClientePersistenceDto dto = ClientePersistenceMapper.fromModelToDto(cliente);

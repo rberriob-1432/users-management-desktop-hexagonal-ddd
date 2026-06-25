@@ -17,9 +17,10 @@ public final class FindClienteByEstatusHandler implements OperationHandler {
 
     @Override
     public void handle() {
-        final List<String> status = clienteController.getAllEstatus();
 
-        if (status.isEmpty()) {
+        final List<String> estatus = clienteController.getAllEstatus();
+
+        if (estatus.isEmpty()) {
             console.println("  No status found in the database.");
             return;
         }
@@ -28,22 +29,27 @@ public final class FindClienteByEstatusHandler implements OperationHandler {
         console.println("  ==========================================");
         console.println("    Available Status");
         console.println("  ==========================================");
-        for (int i = 0; i < status.size(); i++) {
-            console.printf("    [%d] %s%n", i + 1, status.get(i));
+
+        for (int i = 0; i < estatus.size(); i++) {
+            console.printf("    [%d] %s%n", i + 1, estatus.get(i));
         }
+
         console.println("  ==========================================");
 
-        final int choice = console.readInt("\n  Select a city number: ");
+        final int choice = console.readInt("\n  Select a status number: ");
 
-        if (choice < 1 || choice > status.size()) {
+        if (choice < 1 || choice > estatus.size()) {
             console.println("  Invalid selection. Please try again.");
             return;
         }
 
-        final String selectedEstatus = status.get(choice - 1);
-        console.printf("%n  Clients in city: %s%n", selectedEstatus);
+        final String selectedEstatus = estatus.get(choice - 1);
 
-        final List<ClienteResponse> clientes = clienteController.getClientesByEstatus(selectedEstatus);
+        console.printf("%n  Clients with status: %s%n", selectedEstatus);
+
+        final List<ClienteResponse> clientes =
+                clienteController.getClientesByEstatus(selectedEstatus);
+
         printer.printList(clientes);
     }
 }

@@ -15,6 +15,8 @@ public final class PersistenceException extends RuntimeException {
     private static final String MESSAGE_ALL_BARRIOS = "Failed to retrieve all barrios.";
     private static final String MESSAGE_ALL_NAMES = "Failed to retrieve all names.";
     private static final String MESSAGE_BY_NAME = "Failed to retrieve clientes for name: '%s'.";
+    private static final String MESSAGE_ALL_ESTATUS = "Failed to retrieve all estatus.";
+    private static final String MESSAGE_BY_ESTATUS = "Failed to retrieve clientes for estatus: '%s'.";
     private PersistenceException(final String message, final Throwable cause) {
         super(message, cause);
     }
@@ -75,5 +77,13 @@ public final class PersistenceException extends RuntimeException {
     public static PersistenceException becauseFindByNameFailed(
             final String name, final Throwable cause) {
         return new PersistenceException(String.format(MESSAGE_BY_NAME, name), cause);
+    }
+    public static PersistenceException becauseFindAllEstatusFailed(final Throwable cause) {
+        return new PersistenceException(MESSAGE_ALL_ESTATUS, cause);
+    }
+
+    public static PersistenceException becauseFindByEstatusFailed(
+            final String estatus, final Throwable cause) {
+        return new PersistenceException(String.format(MESSAGE_BY_ESTATUS, estatus), cause);
     }
 }

@@ -36,7 +36,9 @@ public final class ClienteRepositoryPostgreSQL implements
         GetAllNamesPort,
         GetClientesByNamePort,
         GetAllCallesByCiudadPort,
-        GetClientesByCalleAndCiudadPort
+        GetClientesByCalleAndCiudadPort,
+        GetAllEstatusPort,
+        GetClientesByEstatusPort
 {
 
     private static final String SQL_INSERT =
@@ -87,7 +89,12 @@ public final class ClienteRepositoryPostgreSQL implements
             "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
                     "FROM clientes WHERE LOWER(calle) = LOWER(?) AND LOWER(ciudad) = LOWER(?) ORDER BY name ASC";
     private final Connection connection;
+    private static final String SQL_SELECT_DISTINCT_ESTATUS =
+            "SELECT DISTINCT status FROM clientes WHERE status IS NOT NULL ORDER BY status ASC";
 
+    private static final String SQL_SELECT_BY_ESTATUS =
+            "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
+                    "FROM clientes WHERE LOWER(status) = LOWER(?) ORDER BY name ASC";
     @Override
     public ClienteModel save(ClienteModel cliente) {
         ClientePersistenceDto dto = ClientePersistenceMapper.fromModelToDto(cliente);
@@ -245,6 +252,31 @@ public final class ClienteRepositoryPostgreSQL implements
             throw new RuntimeException("Failed to find clientes by calle and ciudad", e);
         }
     }
+    @Override
+    public List<String> getAllEstatus() {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_DISTINCT_ESTATUS)) {
+            ResultSet rs = statement.executeQuery();
+            List<String> estatus = new ArrayList<>();
+            while (rs.next()) {
+                estatus.add(rs.getString("status"));
+            }
+            return estatus;
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindAllEstatusFailed(e);
+        }
+    }
+
+    @Override
+    public List<ClienteModel> getByEstatus(String estatus) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ESTATUS)) {
+            statement.setString(1, estatus);
+            ResultSet rs = statement.executeQuery();
+            return ClientePersistenceMapper.fromResultSetToModelList(rs);
+        } catch (SQLException e) {
+            throw PersistenceException.becauseFindByEstatusFailed(estatus, e);
+        }
+    }
+
     private void executeSave(ClientePersistenceDto dto) {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, dto.id());

@@ -33,7 +33,7 @@ public final class FindClienteByNameHandler implements OperationHandler {
         }
         console.println("  ==========================================");
 
-        final int choice = console.readInt("\n  Select a city number: ");
+        final int choice = console.readInt("\n  Select a name number: ");
 
         if (choice < 1 || choice > names.size()) {
             console.println("  Invalid selection. Please try again.");
@@ -41,7 +41,7 @@ public final class FindClienteByNameHandler implements OperationHandler {
         }
 
         final String selectedName = names.get(choice - 1);
-        console.printf("%n  Clients in city: %s%n", selectedName);
+        console.printf("%n  Clients in name: %s%n", selectedName);
 
         final List<ClienteResponse> clientes = clienteController.getClientesByName(selectedName);
         printer.printList(clientes);

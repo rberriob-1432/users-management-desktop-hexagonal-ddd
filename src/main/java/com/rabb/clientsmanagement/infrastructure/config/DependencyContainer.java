@@ -70,12 +70,6 @@ public final class DependencyContainer {
 
         final GetClientesByCiudadUseCase getClientesByCiudadUseCase =
                 new GetClientesByCiudadService(clienteRepository);
-
-        final GetAllBarriosUseCase getAllBarriosUseCase =
-                new GetAllBarriosService(clienteRepository);
-
-        final GetClientesByBarrioUseCase getClientesByBarrioUseCase =
-                new GetClientesByBarrioService(clienteRepository);
         final GetAllNamesUseCase getAllNamesUseCase =
                 new GetAllNamesService(clienteRepository);
 
@@ -95,6 +89,11 @@ public final class DependencyContainer {
                 new GetAllRolesService(clienteRepository);
         final GetClientesByRoleUseCase getClientesByRoleUseCase =
                 new GetClientesByRolesService(clienteRepository);
+        final GetAllBarriosByCiudadUseCase getAllBarriosByCiudadUseCase =
+                new GetAllBarriosByCiudadService(clienteRepository);
+
+        final GetClientesByBarrioAndCiudadUseCase getClientesByBarrioAndCiudadUseCase =
+                new GetClientesByBarrioAndCiudadService(clienteRepository);
 
         this.clienteController =
                 new ClienteController(
@@ -106,8 +105,6 @@ public final class DependencyContainer {
                         loginUseCase,
                         getAllCiudadesUseCase,
                         getClientesByCiudadUseCase,
-                        getAllBarriosUseCase,
-                        getClientesByBarrioUseCase,
                         getAllNamesUseCase,
                         getClientesByNameUseCase,
                         getAllCallesByCiudadUseCase,
@@ -115,7 +112,10 @@ public final class DependencyContainer {
                         getAllEstatusUseCase,
                         getClientesByEstatusUseCase,
                         getAllRolesUseCase,
-                        getClientesByRoleUseCase               );
+                        getClientesByRoleUseCase,
+                        getAllBarriosByCiudadUseCase,
+                        getClientesByBarrioAndCiudadUseCase
+                );
     }
 
     public ClienteController clienteController() {

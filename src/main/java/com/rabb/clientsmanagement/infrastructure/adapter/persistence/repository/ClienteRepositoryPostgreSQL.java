@@ -31,8 +31,6 @@ public final class ClienteRepositoryPostgreSQL implements
         DeleteClientePort,
         GetAllCiudadesPort,
         GetClientesByCiudadPort,
-        GetAllBarriosPort,
-        GetClientesByBarrioPort,
         GetAllNamesPort,
         GetClientesByNamePort,
         GetAllCallesByCiudadPort,
@@ -40,7 +38,9 @@ public final class ClienteRepositoryPostgreSQL implements
         GetAllEstatusPort,
         GetClientesByEstatusPort,
     GetAllRolesPort,
-            GetClientesByRolePort
+            GetClientesByRolePort,
+        GetAllBarriosByCiudadPort,
+        GetClientesByBarrioAndCiudadPort
 {
 
     private static final String SQL_INSERT =
@@ -103,6 +103,12 @@ public final class ClienteRepositoryPostgreSQL implements
     private static final String SQL_SELECT_BY_ROLE =
             "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
                     "FROM clientes WHERE LOWER(role::text) = LOWER(?) ORDER BY name ASC";
+    private static final String SQL_SELECT_DISTINCT_BARRIOS_BY_CIUDAD =
+            "SELECT DISTINCT barrio FROM clientes WHERE barrio IS NOT NULL AND LOWER(ciudad) = LOWER(?) ORDER BY barrio ASC";
+
+    private static final String SQL_SELECT_BY_BARRIO_CIUDAD =
+            "SELECT id, name, email, password, role, status, created_at, updated_at, calle, barrio, ciudad " +
+                    "FROM clientes WHERE LOWER(barrio) = LOWER(?) AND LOWER(ciudad) = LOWER(?) ORDER BY name ASC";
     @Override
     public ClienteModel save(ClienteModel cliente) {
         ClientePersistenceDto dto = ClientePersistenceMapper.fromModelToDto(cliente);
@@ -186,30 +192,8 @@ public final class ClienteRepositoryPostgreSQL implements
         }
     }
 
-    @Override
-    public List<String> getAllBarrios() {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_DISTINCT_BARRIOS)) {
-            ResultSet rs = statement.executeQuery();
-            List<String> barrios = new ArrayList<>();
-            while (rs.next()) {
-                barrios.add(rs.getString("barrio"));
-            }
-            return barrios;
-        } catch (SQLException e) {
-            throw PersistenceException.becauseFindAllBarriosFailed(e);
-        }
-    }
 
-    @Override
-    public List<ClienteModel> getByBarrio(String barrio) {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_BARRIO)) {
-            statement.setString(1, barrio);
-            ResultSet rs = statement.executeQuery();
-            return ClientePersistenceMapper.fromResultSetToModelList(rs);
-        } catch (SQLException e) {
-            throw PersistenceException.becauseFindByBarrioFailed(barrio, e);
-        }
-    }
+
     @Override
     public List<String> getAllNames() {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_DISTINCT_NAMES)) {
@@ -307,6 +291,32 @@ public final class ClienteRepositoryPostgreSQL implements
             return ClientePersistenceMapper.fromResultSetToModelList(rs);
         } catch (SQLException e) {
             throw PersistenceException.becauseFindByRoleFailed(role, e);
+        }
+    }
+    @Override
+    public List<String> getAllBarriosByCiudad(String ciudad) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_DISTINCT_BARRIOS_BY_CIUDAD)) {
+            statement.setString(1, ciudad);
+            ResultSet rs = statement.executeQuery();
+            List<String> barrios = new ArrayList<>();
+            while (rs.next()) {
+                barrios.add(rs.getString("barrio"));
+            }
+            return barrios;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to find barrios by ciudad: " + ciudad, e);
+        }
+    }
+
+    @Override
+    public List<ClienteModel> getByBarrioAndCiudad(String barrio, String ciudad) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_BARRIO_CIUDAD)) {
+            statement.setString(1, barrio);
+            statement.setString(2, ciudad);
+            ResultSet rs = statement.executeQuery();
+            return ClientePersistenceMapper.fromResultSetToModelList(rs);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to find clientes by barrio and ciudad", e);
         }
     }
     private void executeSave(ClientePersistenceDto dto) {

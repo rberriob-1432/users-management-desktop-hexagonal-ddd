@@ -4,6 +4,6 @@ import com.rabb.clientsmanagement.domain.model.ClienteModel;
 
 import java.util.List;
 
-public interface GetClientesByBarrioPort {
-    List<ClienteModel> getByBarrio(String barrio);
+public interface GetClientesByBarrioAndCiudadPort {
+    List<ClienteModel> getByBarrioAndCiudad(String barrio, String ciudad);
 }

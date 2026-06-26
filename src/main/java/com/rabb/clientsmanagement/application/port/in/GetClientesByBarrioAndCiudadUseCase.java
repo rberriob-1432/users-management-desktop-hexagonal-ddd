@@ -4,6 +4,6 @@ import com.rabb.clientsmanagement.domain.model.ClienteModel;
 
 import java.util.List;
 
-public interface GetClientesByBarrioUseCase {
-    List<ClienteModel> execute(String barrio);
+public interface GetClientesByBarrioAndCiudadUseCase {
+    List<ClienteModel> execute(String calle, String ciudad);
 }

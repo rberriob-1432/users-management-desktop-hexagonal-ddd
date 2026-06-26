@@ -20,8 +20,6 @@ public final class ClienteController {
     private final LoginUseCase loginUseCase;
     private final GetAllCiudadesUseCase getAllCiudadesUseCase;
     private final GetClientesByCiudadUseCase getClientesByCiudadUseCase;
-    private final GetAllBarriosUseCase getAllBarriosUseCase;
-    private final GetClientesByBarrioUseCase getClientesByBarrioUseCase;
     private final GetAllNamesUseCase getAllNamesUseCase;
     private final GetClientesByNameUseCase getClientesByNameUseCase;
     private final GetAllCallesByCiudadUseCase getAllCallesByCiudadUseCase;
@@ -30,6 +28,8 @@ public final class ClienteController {
     private final GetClientesByEstatusUseCase getClientesByEstatusUseCase;
     private final GetAllRolesUseCase getAllRolesUseCase;
     private final GetClientesByRoleUseCase getClientesByRoleUseCase;
+    private final GetAllBarriosByCiudadUseCase getAllBarriosByCiudadUseCase;
+    private final GetClientesByBarrioAndCiudadUseCase getClientesByBarrioAndCiudadUseCase;
 
     public List<ClienteResponse> listAllClientes() {
         final var clientes = getAllClientesUseCase.execute();
@@ -83,15 +83,6 @@ public final class ClienteController {
         return ClienteDesktopMapper.toResponseList(clientes);
     }
 
-    public List<String> getAllBarrios() {
-        return getAllBarriosUseCase.execute();
-    }
-
-    public List<ClienteResponse> getClientesByBarrio(final String barrio) {
-        final var clientes = getClientesByBarrioUseCase.execute(barrio);
-        return ClienteDesktopMapper.toResponseList(clientes);
-    }
-
     public List<String> getAllNames() {
         return getAllNamesUseCase.execute();
     }
@@ -116,6 +107,14 @@ public final class ClienteController {
 
     public List<ClienteResponse> getClientesByRole(final String role) {
         final var clientes = getClientesByRoleUseCase.execute(role);
+        return ClienteDesktopMapper.toResponseList(clientes);
+    }
+    public List<String> getAllBarriosByCiudad(final String ciudad) {
+        return getAllBarriosByCiudadUseCase.execute(ciudad);
+    }
+
+    public List<ClienteResponse> getClientesByBarrioAndCiudad(final String barrio, final String ciudad) {
+        final var clientes = getClientesByBarrioAndCiudadUseCase.execute(barrio, ciudad);
         return ClienteDesktopMapper.toResponseList(clientes);
     }
 }
